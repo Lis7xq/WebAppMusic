@@ -34,6 +34,7 @@ namespace WebAppMusic
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAppMusic", Version = "v1" });
             });
             services.AddSingleton<MusicClient>();
+            services.AddSingleton<LyricsClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
