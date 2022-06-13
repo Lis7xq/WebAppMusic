@@ -11,7 +11,7 @@ namespace WebAppMusic.Client
 
     public class LyricsClient
     {
-        LyricsParameters lyricsParameters = new LyricsParameters();
+        
         public async Task<Lmodel> GetLyrics()
         {
             
@@ -20,7 +20,7 @@ namespace WebAppMusic.Client
             HttpRequestMessage request1 = new HttpRequestMessage
             {
                 Method = HttpMethod.Get,
-                RequestUri = new Uri($"https://spotify23.p.rapidapi.com/track_lyrics/?id={lyricsParameters.id}"),
+                RequestUri = new Uri($"https://spotify23.p.rapidapi.com/track_lyrics/?id={LyricsParameters.id}"),
                 Headers =
     {
         { "X-RapidAPI-Host", "spotify23.p.rapidapi.com" },

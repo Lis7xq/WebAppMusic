@@ -14,7 +14,7 @@ namespace WebAppMusic.Client
 
 		public async Task<Model> GetSearch(string Name, string Type, int Limit)  //albums,artists,episodes,genres,playlists,podcasts,tracks,users
 		{
-			LyricsParameters lyricsParameters = new LyricsParameters();
+			
 			HttpClient client = new HttpClient();
 			HttpRequestMessage request = new HttpRequestMessage
 			{                                                                                                                
@@ -34,7 +34,7 @@ namespace WebAppMusic.Client
 
 			var res = JsonConvert.DeserializeObject<Model>(body);
 
-			lyricsParameters.id = res.tracks.items.FirstOrDefault().data.id;
+			LyricsParameters.id = res.tracks.items.FirstOrDefault().data.id;
 			
 
 			return res;
