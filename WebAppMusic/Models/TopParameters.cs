@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace WebAppMusic.Models
 {
-    public static class LyricsParameters
+    public class TopParameters
     {
-        public static string id { get; set; }
+        public string Artist { get; set; }
     }
 }
