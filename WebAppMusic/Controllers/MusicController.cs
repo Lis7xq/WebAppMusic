@@ -13,6 +13,10 @@ namespace WebAppMusic.Controllers
     [Route("[controller]")]
     public class MusicController : ControllerBase
     {
+        public readonly TranClient _tranClient;
+
+        public readonly AuthorClient _authorClient;
+
         public readonly TopMusicClient _topMusicClient;
 
         public readonly LyricsClient _lyricsClient;
@@ -21,12 +25,14 @@ namespace WebAppMusic.Controllers
 
         private readonly ILogger<MusicController> _logger;
 
-        public MusicController(ILogger<MusicController> logger, MusicClient musicClient, LyricsClient lyricsClient, TopMusicClient topMusicClient)
+        public MusicController(ILogger<MusicController> logger, MusicClient musicClient, LyricsClient lyricsClient, TopMusicClient topMusicClient, AuthorClient authorClient, TranClient tranClient)
         {
             _logger = logger;
             _musicClient = musicClient;
             _lyricsClient = lyricsClient;
             _topMusicClient = topMusicClient;
+            _authorClient = authorClient;
+            _tranClient = tranClient;
         }
 
 
@@ -68,7 +74,7 @@ namespace WebAppMusic.Controllers
 
         [HttpGet("Lyrics")]
 
-        public async Task<LyricsResponce> GetLyrics() //LyricsParameters parameters
+        public async Task<LyricsResponce> GetLyrics() 
         {
             LyricsClient lyricsClient = new LyricsClient();
 
@@ -83,16 +89,19 @@ namespace WebAppMusic.Controllers
             {
                 res1.Words += item.words + ". ";
 
+                
             }
-
 
             return res1;
         }
+        
+        
+
 
         [HttpGet("Top10")]
 
 
-        public async Task<TopResponce> GetTop([FromQueryAttribute] TopParameters parameters) //LyricsParameters parameters
+        public async Task<Tmodel> GetTop([FromQueryAttribute] TopParameters parameters) 
         {
             
 
@@ -103,26 +112,62 @@ namespace WebAppMusic.Controllers
 
             Tmodel tmodel = _topMusicClient.GetTop(parameters.Artist).Result;
 
-            //var res1 = new LyricsResponce();
+            
 
-            var result3 = new TopResponce
-            {
-                Track = tmodel.track.FirstOrDefault().strTrack,
-                Album = tmodel.track.FirstOrDefault().strAlbum,
-                Artist = tmodel.track.FirstOrDefault().strArtist,
-                Genre = tmodel.track.FirstOrDefault().strGenre,
-                Mood = tmodel.track.FirstOrDefault().strMood,
-                Style = tmodel.track.FirstOrDefault().strStyle,
-                Description = tmodel.track.FirstOrDefault().strDescriptionEN,
-                ImgLink = tmodel.track.FirstOrDefault().strTrackThumb,
-                MusicVid = tmodel.track.FirstOrDefault().intMusicVidViews,
-                MusicLikes = tmodel.track.FirstOrDefault().intMusicVidLikes
-            };
-
-            return result3;
+            return tmodel;
 
 
            
         }
+
+        [HttpGet("Bio")]
+
+
+        public async Task<Amodel> GetBio([FromQueryAttribute] AuthorParameters parameters) 
+        {
+
+
+            AuthorClient authorClient = new AuthorClient();
+
+            var find1 = await _authorClient.GetBio(parameters.Author);
+
+
+            Amodel amodel = _authorClient.GetBio(parameters.Author).Result;
+
+
+
+            return amodel;
+
+
+
+        }
+
+
+        [HttpPost("Translate")]
+
+
+        public async Task<TranModel> GetTrans()
+        {
+            TranClient tranClient = new TranClient();
+
+            
+
+            var find3 = await _tranClient.GetTrans();
+
+
+            TranModel tranModel = _tranClient.GetTrans().Result;
+
+
+           
+
+            return tranModel;
+
+
+
+        }
+
+
+
+
     }
 }

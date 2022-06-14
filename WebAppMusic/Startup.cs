@@ -36,6 +36,8 @@ namespace WebAppMusic
             services.AddSingleton<MusicClient>();
             services.AddSingleton<LyricsClient>();
             services.AddSingleton<TopMusicClient>();
+            services.AddSingleton<AuthorClient>();
+            services.AddSingleton<TranClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

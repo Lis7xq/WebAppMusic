@@ -35,6 +35,14 @@ namespace WebAppMusic.Client
 
             var res1 = JsonConvert.DeserializeObject<Lmodel>(body1);
 
+
+            
+               
+               //TranParameters.words = res1.lyrics.lines.FirstOrDefault().words;
+            
+
+            
+
             return res1;
         }
 
