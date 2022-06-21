@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebAppMusic.Client;
 
 namespace WebAppMusic
 {
@@ -13,7 +14,11 @@ namespace WebAppMusic
     {
         public static void Main(string[] args)
         {
+            SONGS.Open();
             CreateHostBuilder(args).Build().Run();
+
+           
+            
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -22,5 +27,6 @@ namespace WebAppMusic
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+        
     }
 }

@@ -74,7 +74,7 @@ namespace WebAppMusic.Controllers
 
         [HttpGet("Lyrics")]
 
-        public async Task<LyricsResponce> GetLyrics() 
+        public async Task<LyricsResponce> GetLyrics()
         {
             LyricsClient lyricsClient = new LyricsClient();
 
@@ -89,21 +89,21 @@ namespace WebAppMusic.Controllers
             {
                 res1.Words += item.words + ". ";
 
-                
+
             }
 
             return res1;
         }
-        
-        
+
+
 
 
         [HttpGet("Top10")]
 
 
-        public async Task<Tmodel> GetTop([FromQueryAttribute] TopParameters parameters) 
+        public async Task<Tmodel> GetTop([FromQueryAttribute] TopParameters parameters)
         {
-            
+
 
             TopMusicClient topMusicClient = new TopMusicClient();
 
@@ -112,18 +112,18 @@ namespace WebAppMusic.Controllers
 
             Tmodel tmodel = _topMusicClient.GetTop(parameters.Artist).Result;
 
-            
+
 
             return tmodel;
 
 
-           
+
         }
 
         [HttpGet("Bio")]
 
 
-        public async Task<Amodel> GetBio([FromQueryAttribute] AuthorParameters parameters) 
+        public async Task<Amodel> GetBio([FromQueryAttribute] AuthorParameters parameters)
         {
 
 
@@ -150,7 +150,7 @@ namespace WebAppMusic.Controllers
         {
             TranClient tranClient = new TranClient();
 
-            
+
 
             var find3 = await _tranClient.GetTrans();
 
@@ -158,16 +158,28 @@ namespace WebAppMusic.Controllers
             TranModel tranModel = _tranClient.GetTrans().Result;
 
 
-           
+
 
             return tranModel;
 
 
-
         }
 
+        [HttpPost("List OF Songs")]
 
+        public void AddtoList(string name)
+        {
+            
 
+            SONGS.ListOfSongs.Add(name);
+            SONGS.Save();
+        }
 
+        [HttpGet]
+
+        public List<string> ShowList()
+        {
+            return SONGS.ListOfSongs;
+        }
     }
 }
