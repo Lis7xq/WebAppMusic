@@ -14,7 +14,7 @@ namespace WebAppMusic
     {
         public static void Main(string[] args)
         {
-            SONGS.Open();
+            
             CreateHostBuilder(args).Build().Run();
 
            

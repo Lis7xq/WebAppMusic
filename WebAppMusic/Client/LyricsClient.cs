@@ -38,7 +38,7 @@ namespace WebAppMusic.Client
 
             
                
-               //TranParameters.words = res1.lyrics.lines.FirstOrDefault().words;
+             
             
 
             

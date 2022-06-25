@@ -16,7 +16,7 @@ namespace WebAppMusic.Models
     public class Tracks
     {
         public int totalCount { get; set; }
-        public Item[] items { get; set; }
+        public List <Item> items { get; set; }
         public Paginginfo pagingInfo { get; set; }
     }
 

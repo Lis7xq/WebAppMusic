@@ -7,6 +7,7 @@ namespace WebAppMusic.Models
 {
     public class MusicResponce
     {
+        public List <Item> items;
         public int totalCoiunt { get; set; }
         public string Uri { get; set; }
 

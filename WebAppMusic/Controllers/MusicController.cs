@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.Model;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAppMusic.Client;
+using WebAppMusic.Extensions;
 using WebAppMusic.Models;
 
 namespace WebAppMusic.Controllers
@@ -23,9 +27,11 @@ namespace WebAppMusic.Controllers
 
         public readonly MusicClient _musicClient;
 
+        private readonly IDynamoDbClient _dynamoDbClient;
+
         private readonly ILogger<MusicController> _logger;
 
-        public MusicController(ILogger<MusicController> logger, MusicClient musicClient, LyricsClient lyricsClient, TopMusicClient topMusicClient, AuthorClient authorClient, TranClient tranClient)
+        public MusicController(ILogger<MusicController> logger, MusicClient musicClient, LyricsClient lyricsClient, TopMusicClient topMusicClient, AuthorClient authorClient, TranClient tranClient, IDynamoDbClient dynamoDbClient)
         {
             _logger = logger;
             _musicClient = musicClient;
@@ -33,12 +39,13 @@ namespace WebAppMusic.Controllers
             _topMusicClient = topMusicClient;
             _authorClient = authorClient;
             _tranClient = tranClient;
+            _dynamoDbClient = dynamoDbClient;
         }
 
 
         [HttpGet("Music/Author")]
 
-        public async Task<MusicResponce> GetSearch([FromQueryAttribute] MusicParameters parameters)
+        public async Task<Model> GetSearch([FromQueryAttribute] MusicParameters parameters)   //MusicResponce
         {
             MusicClient musicClient = new MusicClient();
 
@@ -51,26 +58,35 @@ namespace WebAppMusic.Controllers
 
 
 
+            //List<MusicResponce> res = new List<MusicResponce>();
+            //for (int i = 0; i < parameters.Limit; i++)
+            //{
+                var result = new MusicResponce
+                {
+                    items = music.tracks.items,
+                    totalCoiunt = music.tracks.totalCount,
+                    Uri = music.tracks.items.FirstOrDefault().data.uri,
+                    Id = music.tracks.items.FirstOrDefault().data.id,
+                    Name = music.tracks.items.FirstOrDefault().data.name,
+                    Alburi = music.tracks.items.FirstOrDefault().data.albumOfTrack.uri,
+                    AlbName = music.tracks.items.FirstOrDefault().data.albumOfTrack.name,
+                    AlbId = music.tracks.items.FirstOrDefault().data.albumOfTrack.id,
+                    SourceUrl = music.tracks.items.FirstOrDefault().data.albumOfTrack.coverArt.sources.FirstOrDefault().url,
+                    width = music.tracks.items.FirstOrDefault().data.albumOfTrack.coverArt.sources.FirstOrDefault().width,
+                    height = music.tracks.items.FirstOrDefault().data.albumOfTrack.coverArt.sources.FirstOrDefault().height,
+                    ProfName = music.tracks.items.FirstOrDefault().data.artists.items.FirstOrDefault().profile.name,
+                    totaltime = music.tracks.items.FirstOrDefault().data.duration.totalMilliseconds,
 
-            var result = new MusicResponce
-            {
-                totalCoiunt = music.tracks.totalCount,
-                Uri = music.tracks.items.FirstOrDefault().data.uri,
-                Id = music.tracks.items.FirstOrDefault().data.id,
-                Name = music.tracks.items.FirstOrDefault().data.name,
-                Alburi = music.tracks.items.FirstOrDefault().data.albumOfTrack.uri,
-                AlbName = music.tracks.items.FirstOrDefault().data.albumOfTrack.name,
-                AlbId = music.tracks.items.FirstOrDefault().data.albumOfTrack.id,
-                SourceUrl = music.tracks.items.FirstOrDefault().data.albumOfTrack.coverArt.sources.FirstOrDefault().url,
-                width = music.tracks.items.FirstOrDefault().data.albumOfTrack.coverArt.sources.FirstOrDefault().width,
-                height = music.tracks.items.FirstOrDefault().data.albumOfTrack.coverArt.sources.FirstOrDefault().height,
-                ProfName = music.tracks.items.FirstOrDefault().data.artists.items.FirstOrDefault().profile.name,
-                totaltime = music.tracks.items.FirstOrDefault().data.duration.totalMilliseconds,
-            };
+                };
+                //res.Add(result);
+            
 
-            return result;
+            
+             return model;
+            
         }
 
+        
 
         [HttpGet("Lyrics")]
 
@@ -80,8 +96,8 @@ namespace WebAppMusic.Controllers
 
             var search = await _lyricsClient.GetLyrics();
 
-
-
+         
+            
             Lmodel lmodel = lyricsClient.GetLyrics().Result;
             var res1 = new LyricsResponce();
 
@@ -89,7 +105,7 @@ namespace WebAppMusic.Controllers
             {
                 res1.Words += item.words + ". ";
 
-
+               TEST.word.Add(item.words + ".");
             }
 
             return res1;
@@ -143,10 +159,10 @@ namespace WebAppMusic.Controllers
         }
 
 
-        [HttpPost("Translate")]
+        [HttpGet("Translate")]
 
 
-        public async Task<TranModel> GetTrans()
+        public async Task<string> GetTrans()
         {
             TranClient tranClient = new TranClient();
 
@@ -155,7 +171,7 @@ namespace WebAppMusic.Controllers
             var find3 = await _tranClient.GetTrans();
 
 
-            TranModel tranModel = _tranClient.GetTrans().Result;
+            string tranModel = _tranClient.GetTrans().Result;
 
 
 
@@ -165,21 +181,91 @@ namespace WebAppMusic.Controllers
 
         }
 
-        [HttpPost("List OF Songs")]
 
-        public void AddtoList(string name)
+        [HttpGet("Show")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetFavouritebyId([FromQuery] string Tid)
         {
-            
+            var result = await _dynamoDbClient.GetDataByID(Tid);
 
-            SONGS.ListOfSongs.Add(name);
-            SONGS.Save();
+            if (result == null)
+                return NotFound("it looks like this data is not in the database");
+
+            var MusicResponce = new MusicResponce
+            {
+                Id = result.Tid,
+                Uri = result.SpotUrl,
+                ProfName = result.ArtistName,
+                Name = result.SongName
+
+            };
+            return Ok(MusicResponce);
         }
 
-        [HttpGet]
+        [HttpPost("Add")]
 
-        public List<string> ShowList()
+        public async Task<IActionResult> AddToFavourites([FromBody] MusicResponce music)
         {
-            return SONGS.ListOfSongs;
+
+            var data = new UserDbRepository
+            {
+                Tid = music.Id,
+                SongName = music.Name,
+                ArtistName = music.ProfName,
+                SpotUrl = music.Uri
+            };
+           var result = await _dynamoDbClient.PostDataToOb(data);
+
+            if (result == false)
+            {
+                return BadRequest("Error with insertion data to DB. PLS check cosnole log");
+            }
+
+            return Ok("Data has been added to DB");
         }
+
+        [HttpGet("All")]
+
+        public async Task<IActionResult> GetAll()
+        {
+            var responce = await _dynamoDbClient.GetAll();
+
+            if (responce == null)
+                return NotFound("No info found in DB");
+
+            var result = responce
+                .Select(x => new MusicResponce()
+                {
+                    Id = x.Tid,
+                    Name = x.SongName,
+                    ProfName = x.ArtistName,
+                    Uri = x.SpotUrl
+                })
+                .ToList();
+            return Ok(result);
+        }
+        //[HttpGet]
+
+        //public async Task<GetItemResponse> GetDataFromDb()
+        //{
+        //    var tableName = "song-db";
+
+        //    var item = new GetItemRequest
+        //    {
+        //        TableName = tableName,
+        //        Key = new Dictionary<string, AttributeValue>
+        //        {
+        //            {"Tid", new AttributeValue{S = "12345"}}
+        //        }
+        //    };
+
+        //    var responce = await _dynamoDB.GetItemAsync(item);
+
+        //    var result = responce.Item.ToClass<UserDbRepository>();
+
+        //    return responce;
+        //}
+
     }
 }
