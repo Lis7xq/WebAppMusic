@@ -51,7 +51,7 @@ namespace WebAppMusic
             var client = new AmazonDynamoDBClient(credentials, config);
             services.AddSingleton<IAmazonDynamoDB>(client);
             services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
-            services.AddSingleton<IDynamoDbClient, DynamoDbClient>();
+            
 
         }
 

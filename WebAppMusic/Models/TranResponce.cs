@@ -5,12 +5,8 @@ using System.Threading.Tasks;
 
 namespace WebAppMusic.Models
 {
-    public class LyricsResponce
+    public class TranResponce
     {
-       
-        public string language { get; set; }
-
-        public string Words { get; set; }
-
+        public string translate { get; set; }
     }
 }

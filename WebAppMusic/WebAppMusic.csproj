@@ -5,6 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Client\DynamoDbClient.cs" />
+    <Compile Remove="Client\IDynamoDbClient.cs" />
+    <Compile Remove="Client\TranClient.cs" />
+    <Compile Remove="Models\Tparam.cs" />
+    <Compile Remove="Models\TranResponce.cs" />
+    <Compile Remove="Models\UserDbRepository.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.3.50" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />

@@ -27,11 +27,11 @@ namespace WebAppMusic.Controllers
 
         public readonly MusicClient _musicClient;
 
-        private readonly IDynamoDbClient _dynamoDbClient;
+       
 
         private readonly ILogger<MusicController> _logger;
 
-        public MusicController(ILogger<MusicController> logger, MusicClient musicClient, LyricsClient lyricsClient, TopMusicClient topMusicClient, AuthorClient authorClient, TranClient tranClient, IDynamoDbClient dynamoDbClient)
+        public MusicController(ILogger<MusicController> logger, MusicClient musicClient, LyricsClient lyricsClient, TopMusicClient topMusicClient, AuthorClient authorClient, TranClient tranClient)
         {
             _logger = logger;
             _musicClient = musicClient;
@@ -39,13 +39,13 @@ namespace WebAppMusic.Controllers
             _topMusicClient = topMusicClient;
             _authorClient = authorClient;
             _tranClient = tranClient;
-            _dynamoDbClient = dynamoDbClient;
+           
         }
 
 
         [HttpGet("Music/Author")]
 
-        public async Task<Model> GetSearch([FromQueryAttribute] MusicParameters parameters)   //MusicResponce
+        public async Task<MusicResponce> GetSearch([FromQueryAttribute] MusicParameters parameters)   //MusicResponce
         {
             MusicClient musicClient = new MusicClient();
 
@@ -82,7 +82,7 @@ namespace WebAppMusic.Controllers
             
 
             
-             return model;
+             return result;
             
         }
 
@@ -107,6 +107,7 @@ namespace WebAppMusic.Controllers
 
                TEST.word.Add(item.words + ".");
             }
+
 
             return res1;
         }
@@ -159,92 +160,92 @@ namespace WebAppMusic.Controllers
         }
 
 
-        [HttpGet("Translate")]
+        //[HttpGet("Translate")]
 
 
-        public async Task<string> GetTrans()
-        {
-            TranClient tranClient = new TranClient();
-
-
-
-            var find3 = await _tranClient.GetTrans();
-
-
-            string tranModel = _tranClient.GetTrans().Result;
+        //public async Task<string> GetTrans()
+        //{
+        //    TranClient tranClient = new TranClient();
 
 
 
-
-            return tranModel;
-
-
-        }
+        //    var find3 = await _tranClient.GetTrans();
 
 
-        [HttpGet("Show")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetFavouritebyId([FromQuery] string Tid)
-        {
-            var result = await _dynamoDbClient.GetDataByID(Tid);
+        //    string tranModel = _tranClient.GetTrans().Result;
 
-            if (result == null)
-                return NotFound("it looks like this data is not in the database");
 
-            var MusicResponce = new MusicResponce
-            {
-                Id = result.Tid,
-                Uri = result.SpotUrl,
-                ProfName = result.ArtistName,
-                Name = result.SongName
 
-            };
-            return Ok(MusicResponce);
-        }
 
-        [HttpPost("Add")]
+        //    return tranModel;
 
-        public async Task<IActionResult> AddToFavourites([FromBody] MusicResponce music)
-        {
 
-            var data = new UserDbRepository
-            {
-                Tid = music.Id,
-                SongName = music.Name,
-                ArtistName = music.ProfName,
-                SpotUrl = music.Uri
-            };
-           var result = await _dynamoDbClient.PostDataToOb(data);
+        //}
 
-            if (result == false)
-            {
-                return BadRequest("Error with insertion data to DB. PLS check cosnole log");
-            }
 
-            return Ok("Data has been added to DB");
-        }
+        //[HttpGet("Show")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //public async Task<IActionResult> GetFavouritebyId([FromQuery] string Tid)
+        //{
+        //    var result = await _dynamoDbClient.GetDataByID(Tid);
 
-        [HttpGet("All")]
+        //    if (result == null)
+        //        return NotFound("it looks like this data is not in the database");
 
-        public async Task<IActionResult> GetAll()
-        {
-            var responce = await _dynamoDbClient.GetAll();
+        //    var MusicResponce = new MusicResponce
+        //    {
+        //        Id = result.Tid,
+        //        Uri = result.SpotUrl,
+        //        ProfName = result.ArtistName,
+        //        Name = result.SongName
 
-            if (responce == null)
-                return NotFound("No info found in DB");
+        //    };
+        //    return Ok(MusicResponce);
+        //}
 
-            var result = responce
-                .Select(x => new MusicResponce()
-                {
-                    Id = x.Tid,
-                    Name = x.SongName,
-                    ProfName = x.ArtistName,
-                    Uri = x.SpotUrl
-                })
-                .ToList();
-            return Ok(result);
-        }
+        //[HttpPost("Add")]
+
+        //public async Task<IActionResult> AddToFavourites([FromBody] MusicResponce music)
+        //{
+
+        //    var data = new UserDbRepository
+        //    {
+        //        Tid = music.Id,
+        //        SongName = music.Name,
+        //        ArtistName = music.ProfName,
+        //        SpotUrl = music.Uri
+        //    };
+        //   var result = await _dynamoDbClient.PostDataToOb(data);
+
+        //    if (result == false)
+        //    {
+        //        return BadRequest("Error with insertion data to DB. PLS check cosnole log");
+        //    }
+
+        //    return Ok("Data has been added to DB");
+        //}
+
+        //[HttpGet("All")]
+
+        //public async Task<IActionResult> GetAll()
+        //{
+        //    var responce = await _dynamoDbClient.GetAll();
+
+        //    if (responce == null)
+        //        return NotFound("No info found in DB");
+
+        //    var result = responce
+        //        .Select(x => new MusicResponce()
+        //        {
+        //            Id = x.Tid,
+        //            Name = x.SongName,
+        //            ProfName = x.ArtistName,
+        //            Uri = x.SpotUrl
+        //        })
+        //        .ToList();
+        //    return Ok(result);
+        //}
         //[HttpGet]
 
         //public async Task<GetItemResponse> GetDataFromDb()

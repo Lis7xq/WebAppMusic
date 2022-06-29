@@ -14,9 +14,17 @@ namespace WebAppMusic
     {
         public static void Main(string[] args)
         {
-            
-            CreateHostBuilder(args).Build().Run();
+            Users.LastSearch = new Dictionary<string, Models.MusicResponce>();
+            Users.ListOfUsers = new Dictionary<string, List<Models.MusicResponce>>();
+            try
+            {
+                Users.Open();
+            }
+            catch { Users.Save(); Users.Open(); }
 
+            CreateHostBuilder(args).Build().Run();
+            
+           
            
             
         }
