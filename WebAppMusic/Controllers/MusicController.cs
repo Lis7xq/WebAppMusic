@@ -56,12 +56,15 @@ namespace WebAppMusic.Controllers
             Model model = musicClient.GetSearch(parameters.Name, parameters.Type, parameters.Limit).Result;
 
 
-
+            MusicResponce result = new MusicResponce();
 
             //List<MusicResponce> res = new List<MusicResponce>();
             //for (int i = 0; i < parameters.Limit; i++)
             //{
-                var result = new MusicResponce
+
+            if (music.tracks.items.Count != 0)
+            {
+                 result = new MusicResponce
                 {
                     items = music.tracks.items,
                     totalCoiunt = music.tracks.totalCount,
@@ -78,12 +81,16 @@ namespace WebAppMusic.Controllers
                     totaltime = music.tracks.items.FirstOrDefault().data.duration.totalMilliseconds,
 
                 };
-                //res.Add(result);
-            
+               
+            }
+            else { result = null; }
 
-            
-             return result;
-            
+            return result;
+
+
+
+
+
         }
 
         
@@ -100,7 +107,7 @@ namespace WebAppMusic.Controllers
             
             Lmodel lmodel = lyricsClient.GetLyrics().Result;
             var res1 = new LyricsResponce();
-
+            TEST.word = null;
             foreach (var item in lmodel.lyrics.lines)
             {
                 res1.Words += item.words + ". ";
@@ -160,27 +167,30 @@ namespace WebAppMusic.Controllers
         }
 
 
-        //[HttpGet("Translate")]
+        [HttpPost("Translate")]
 
 
-        //public async Task<string> GetTrans()
-        //{
-        //    TranClient tranClient = new TranClient();
+        public async Task<TRANSLATEmodelcs> GetTrans()
+        {
+            TranClient tranClient = new TranClient();
+
+            
+
+            var find3 = await _tranClient.GetTrans();
+
+
+            
+
+            string tranModel = find3.translated_text;
+
+            
+            return find3;
+
+
+        }
 
 
 
-        //    var find3 = await _tranClient.GetTrans();
-
-
-        //    string tranModel = _tranClient.GetTrans().Result;
-
-
-
-
-        //    return tranModel;
-
-
-        //}
 
 
         //[HttpGet("Show")]

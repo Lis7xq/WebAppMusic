@@ -23,7 +23,7 @@ namespace WebAppMusic.Client
 				Headers =
 	{
 		{ "X-RapidAPI-Host", "spotify23.p.rapidapi.com" },                                                            
-		{ "X-RapidAPI-Key", "ed468944ddmsha17e240ea898a13p17cb0ajsn4c83ced84247" },                               
+		{ "X-RapidAPI-Key", "bedb9b8f8emshe70d8699a798647p1d7300jsn6b4acd41b488" },                               
 	},
 			};
 			var response = await client.SendAsync(request);
@@ -34,7 +34,22 @@ namespace WebAppMusic.Client
 
 			var res = JsonConvert.DeserializeObject<Model>(body);
 
-			LyricsParameters.id = res.tracks.items.FirstOrDefault().data.id;
+
+            if (res.tracks.items.Count == 0)
+            {
+				//res.tracks = "";
+            }
+            else { LyricsParameters.id = res.tracks.items.FirstOrDefault().data.id; }
+            
+				
+			
+            
+				
+			
+			
+
+
+
 			
 
 			return res;
