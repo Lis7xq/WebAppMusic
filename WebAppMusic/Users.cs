@@ -16,6 +16,8 @@ namespace WebAppMusic
             LastSearch = new Dictionary<string, MusicResponce>();
         }
 
+
+
         public static Dictionary<string,List<MusicResponce>> ListOfUsers { get; set; }
         public static Dictionary<string, MusicResponce> LastSearch { get; set; }
 

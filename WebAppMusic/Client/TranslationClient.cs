@@ -37,7 +37,7 @@ namespace WebAppMusic.Client
 	},
 				Content = new FormUrlEncodedContent(new Dictionary<string, string>
 	{
-		{ "to", $"ru" },
+		{ "to", $"uk" },
 		{ "text", $"{beb}" },
 	}),
 			};

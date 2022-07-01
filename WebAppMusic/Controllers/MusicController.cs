@@ -1,5 +1,6 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using Amazon.Runtime.Internal.Transform;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -45,7 +46,7 @@ namespace WebAppMusic.Controllers
 
         [HttpGet("Music/Author")]
 
-        public async Task<MusicResponce> GetSearch([FromQueryAttribute] MusicParameters parameters)   //MusicResponce
+        public async Task<MusicResponce> GetSearch([FromQueryAttribute] MusicParameters parameters, string user)   //MusicResponce
         {
             MusicClient musicClient = new MusicClient();
 
@@ -64,8 +65,9 @@ namespace WebAppMusic.Controllers
 
             if (music.tracks.items.Count != 0)
             {
-                 result = new MusicResponce
+                result = new MusicResponce
                 {
+                    Profurl = music.tracks.items.FirstOrDefault().data.artists.items.FirstOrDefault().uri,
                     items = music.tracks.items,
                     totalCoiunt = music.tracks.totalCount,
                     Uri = music.tracks.items.FirstOrDefault().data.uri,
@@ -84,6 +86,15 @@ namespace WebAppMusic.Controllers
                
             }
             else { result = null; }
+
+            try
+            {
+                if (!Users.LastSearch.ContainsKey(user)) Users.LastSearch.Add(user, new MusicResponce());
+                Users.LastSearch[user] = result;
+            }
+            catch { }
+
+           
 
             return result;
 
@@ -107,7 +118,7 @@ namespace WebAppMusic.Controllers
             
             Lmodel lmodel = lyricsClient.GetLyrics().Result;
             var res1 = new LyricsResponce();
-            TEST.word = null;
+            //TEST.word = null;
             foreach (var item in lmodel.lyrics.lines)
             {
                 res1.Words += item.words + ". ";
@@ -175,23 +186,47 @@ namespace WebAppMusic.Controllers
             TranClient tranClient = new TranClient();
 
             
-
             var find3 = await _tranClient.GetTrans();
 
 
-            
-
             string tranModel = find3.translated_text;
 
-            
             return find3;
-
 
         }
 
 
 
+        [HttpGet("addtofav")]
 
+        public void AddToFav(string user)
+        {
+            if (!Users.ListOfUsers.ContainsKey(user)) Users.ListOfUsers.Add(user, new List<MusicResponce>());
+            Users.ListOfUsers[user].Add(Users.LastSearch[user]);
+            Users.Save();
+        }
+
+
+        [HttpGet("favourites")]
+        public List<MusicResponce> GetFav(string user)
+        {
+            if (!Users.LastSearch.ContainsKey(user)) Users.LastSearch.Add(user, new MusicResponce());
+            if (!Users.ListOfUsers.ContainsKey(user)) Users.ListOfUsers.Add(user, new List<MusicResponce>());
+
+            return Users.ListOfUsers[user];
+        }
+
+        [HttpDelete("delete")]
+        public void DellFromFav(string user, int numb)
+        {
+            string s;
+            if (numb <= Users.ListOfUsers[user].Count)
+            {
+                Users.ListOfUsers[user].RemoveAt(numb - 1);
+                Users.Save();
+            }
+            else {s = "Error";}
+        }
 
         //[HttpGet("Show")]
         //[ProducesResponseType(StatusCodes.Status200OK)]
@@ -255,27 +290,6 @@ namespace WebAppMusic.Controllers
         //        })
         //        .ToList();
         //    return Ok(result);
-        //}
-        //[HttpGet]
-
-        //public async Task<GetItemResponse> GetDataFromDb()
-        //{
-        //    var tableName = "song-db";
-
-        //    var item = new GetItemRequest
-        //    {
-        //        TableName = tableName,
-        //        Key = new Dictionary<string, AttributeValue>
-        //        {
-        //            {"Tid", new AttributeValue{S = "12345"}}
-        //        }
-        //    };
-
-        //    var responce = await _dynamoDB.GetItemAsync(item);
-
-        //    var result = responce.Item.ToClass<UserDbRepository>();
-
-        //    return responce;
         //}
 
     }
