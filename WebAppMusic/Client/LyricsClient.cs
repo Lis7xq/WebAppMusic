@@ -24,7 +24,7 @@ namespace WebAppMusic.Client
                 Headers =
     {
         { "X-RapidAPI-Host", "spotify23.p.rapidapi.com" },
-        { "X-RapidAPI-Key", "3f5b63bb63msh0673a778ca97167p191036jsn93fe0a392291" },
+        { "X-RapidAPI-Key", "bedb9b8f8emshe70d8699a798647p1d7300jsn6b4acd41b488" },
     },
             };
             var response1 = await client1.SendAsync(request1);
@@ -34,6 +34,8 @@ namespace WebAppMusic.Client
 
 
             var res1 = JsonConvert.DeserializeObject<Lmodel>(body1);
+
+
 
             return res1;
         }

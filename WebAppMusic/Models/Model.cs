@@ -16,7 +16,7 @@ namespace WebAppMusic.Models
     public class Tracks
     {
         public int totalCount { get; set; }
-        public Item[] items { get; set; }
+        public List<Item> items { get; set; }
         public Paginginfo pagingInfo { get; set; }
     }
 
@@ -44,25 +44,25 @@ namespace WebAppMusic.Models
     }
 
     public class Albumoftrack
-    {
-        public string uri { get; set; }
-        public string name { get; set; }
-        public Coverart coverArt { get; set; }
-        public string id { get; set; }
-        public Sharinginfo sharingInfo { get; set; }
-    }
+        {
+            public string uri { get; set; }
+            public string name { get; set; }
+            public Coverart coverArt { get; set; }
+            public string id { get; set; }
+            public Sharinginfo sharingInfo { get; set; }
+         }
 
-    public class Coverart
-    {
-        public Source[] sources { get; set; }
-    }
+        public class Coverart
+        {
+            public Source[] sources { get; set; }
+        }
 
-    public class Source
-    {
-        public string url { get; set; }
-        public int width { get; set; }
-        public int height { get; set; }
-    }
+        public class Source
+        {
+            public string url { get; set; }
+            public int width { get; set; }
+            public int height { get; set; }
+        }
 
     public class Sharinginfo
     {
@@ -70,20 +70,20 @@ namespace WebAppMusic.Models
     }
 
     public class Artists
-    {
-        public Item1[] items { get; set; }
-    }
+        {
+            public Item1[] items { get; set; }
+        }
 
-    public class Item1
-    {
-        public string uri { get; set; }
-        public Profile profile { get; set; }
-    }
+        public class Item1
+        {
+            public string uri { get; set; }
+            public Profile profile { get; set; }
+        }
 
-    public class Profile
-    {
-        public string name { get; set; }
-    }
+        public class Profile
+        {
+            public string name { get; set; }
+        }
 
     public class Contentrating
     {
@@ -99,6 +99,7 @@ namespace WebAppMusic.Models
     {
         public bool playable { get; set; }
     }
+
 
 
 

@@ -5,12 +5,8 @@ using System.Threading.Tasks;
 
 namespace WebAppMusic.Models
 {
-    public class LyricsResponce
+    public class TEST
     {
-       
-        public string language { get; set; }
-
-        public string Words { get; set; }
-
+       public static List<string> word = new List<string>();
     }
 }

@@ -5,12 +5,8 @@ using System.Threading.Tasks;
 
 namespace WebAppMusic.Models
 {
-    public class LyricsResponce
+    public class AuthorParameters
     {
-       
-        public string language { get; set; }
-
-        public string Words { get; set; }
-
+        public string Author { get; set; }
     }
 }
