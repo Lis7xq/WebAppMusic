@@ -201,9 +201,13 @@ namespace WebAppMusic.Controllers
 
         public void AddToFav(string user)
         {
-            if (!Users.ListOfUsers.ContainsKey(user)) Users.ListOfUsers.Add(user, new List<MusicResponce>());
-            Users.ListOfUsers[user].Add(Users.LastSearch[user]);
-            Users.Save();
+            try
+            {
+                if (!Users.ListOfUsers.ContainsKey(user)) Users.ListOfUsers.Add(user, new List<MusicResponce>());
+                Users.ListOfUsers[user].Add(Users.LastSearch[user]);
+                Users.Save();
+            }
+            catch {}
         }
 
 
