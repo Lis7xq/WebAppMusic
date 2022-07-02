@@ -23,7 +23,7 @@ namespace WebAppMusic.Client
 				Headers =
 	{
 		{ "X-RapidAPI-Host", "spotify23.p.rapidapi.com" },                                                            
-		{ "X-RapidAPI-Key", "bedb9b8f8emshe70d8699a798647p1d7300jsn6b4acd41b488" },                               
+		{ "X-RapidAPI-Key", "bedb9b8f8emshe70d8699a798647p1d7300jsn6b4acd41b488" },                               //c6d7cd47e7mshf4ad89444032254p18ba09jsn8b861e188fe5
 	},
 			};
 			var response = await client.SendAsync(request);

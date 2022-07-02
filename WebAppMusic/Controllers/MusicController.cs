@@ -224,12 +224,16 @@ namespace WebAppMusic.Controllers
         public void DellFromFav(string user, int numb)
         {
             string s;
-            if (numb <= Users.ListOfUsers[user].Count)
+            if(numb > 0)
             {
-                Users.ListOfUsers[user].RemoveAt(numb - 1);
-                Users.Save();
+                if (numb <= Users.ListOfUsers[user].Count)
+                {
+                    Users.ListOfUsers[user].RemoveAt(numb - 1); //
+                    Users.Save();
+                }
+                else { s = "Error"; }
             }
-            else {s = "Error";}
+            else { s = "Error"; }
         }
 
         //[HttpGet("Show")]
